@@ -1,6 +1,6 @@
+import os
 import json
 from pathlib import Path
-
 import pytest
 
 from pages.cart_page import CartPage
@@ -14,6 +14,9 @@ DATA_DIR = Path(__file__).parent / "test_data"
 def _load(name: str) -> dict:
     return json.loads((DATA_DIR / name).read_text())
 
+@pytest.fixture(scope="session")
+def base_url():
+    return os.getenv("BASE_URL", "https://www.saucedemo.com")
 
 @pytest.fixture(scope="session")
 def users():
