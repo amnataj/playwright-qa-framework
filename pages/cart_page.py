@@ -7,3 +7,7 @@ class CartPage(BasePage):
         super().__init__(page)
         self.items = page.locator('[data-test="inventory-item"]')
         self.item_names = page.locator('[data-test="inventory-item-name"]')
+        self.checkout_button = page.locator('[data-test="checkout"]')
+
+    def proceed_to_checkout(self):
+        self.checkout_button.click()

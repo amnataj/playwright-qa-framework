@@ -4,15 +4,25 @@ from pathlib import Path
 import pytest
 
 from pages.cart_page import CartPage
+from pages.checkout_page import CheckoutPage
 from pages.inventory_page import InventoryPage
 from pages.login_page import LoginPage
 
-USERS_FILE = Path(__file__).parent / "test_data" / "users.json"
+DATA_DIR = Path(__file__).parent / "test_data"
+
+
+def _load(name: str) -> dict:
+    return json.loads((DATA_DIR / name).read_text())
 
 
 @pytest.fixture(scope="session")
 def users():
-    return json.loads(USERS_FILE.read_text())
+    return _load("users.json")
+
+
+@pytest.fixture(scope="session")
+def customer():
+    return _load("customer.json")
 
 
 @pytest.fixture
@@ -32,3 +42,17 @@ def inventory_page(page, login_page, users):
 @pytest.fixture
 def cart_page(page):
     return CartPage(page)
+
+
+@pytest.fixture
+def checkout_page(page):
+    return CheckoutPage(page)
+
+
+@pytest.fixture
+def checkout_ready(inventory_page, cart_page, checkout_page):
+    """Logged in, one backpack in the cart, sitting on checkout step one."""
+    inventory_page.add_to_cart("sauce-labs-backpack")
+    inventory_page.open_cart()
+    cart_page.proceed_to_checkout()
+    return checkout_page
